@@ -11,7 +11,6 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final notesProvider = Provider.of<NoteProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text("Notes"),
@@ -20,6 +19,8 @@ class HomePage extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.yellow.shade600,
         onPressed: () {
+          final notesProvider =
+              Provider.of<NoteProvider>(context, listen: false);
           notesProvider.addNote(
               title: _titleTextEditingController.text,
               body: _bodyTextEditingController.text);
@@ -62,6 +63,8 @@ class HomePage extends StatelessWidget {
                       color: Theme.of(context).primaryColor,
                     ),
                     onPressed: () {
+                      final notesProvider =
+                          Provider.of<NoteProvider>(context, listen: false);
                       notesProvider.addNote(
                           title: _titleTextEditingController.text,
                           body: _bodyTextEditingController.text);
@@ -70,15 +73,17 @@ class HomePage extends StatelessWidget {
                 ),
               ),
             ),
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(), // <- Here
-              itemCount: notesProvider.notes.length,
-              itemBuilder: (BuildContext context, int index) {
-                return NoteListTile(
-                  note: notesProvider.notes[index],
-                );
-              },
+            Consumer<NoteProvider>(
+              builder: (context, notesProvider, child) => ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(), // <- Here
+                itemCount: notesProvider.notes.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return NoteListTile(
+                    note: notesProvider.notes[index],
+                  );
+                },
+              ),
             )
           ],
         ),
